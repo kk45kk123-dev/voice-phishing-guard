@@ -293,6 +293,7 @@ export default function AnalysisPage() {
   }
 
   const { analysis, riskLevel, isDemo } = view
+  const isUrgent = riskLevel === 'CRITICAL' || riskLevel === 'DANGER'
   return (
     <main className="flex flex-col gap-6">
       {isDemo && (
@@ -301,12 +302,23 @@ export default function AnalysisPage() {
         </Banner>
       )}
 
+      {/* 위험 상황에서는 긴 설명보다 "지금 해야 할 일"로 바로 가는 길을
+          가장 먼저 보여준다 — 사기 유형 설명은 그 다음이다. */}
+      <RiskBadge level={riskLevel} />
+      {isUrgent && (
+        <button
+          type="button"
+          onClick={() => router.push(`/guidance/${sessionId}`)}
+          className="w-full rounded-xl bg-red-600 px-6 py-4 text-lg font-bold text-white"
+        >
+          🚨 지금 바로 대응 방법 확인하기
+        </button>
+      )}
+
       <div>
         <p className="text-sm text-gray-500">분석 결과</p>
         <h1 className="text-2xl font-bold">{CASE_LABELS[analysis.case_code]}</h1>
       </div>
-
-      <RiskBadge level={riskLevel} />
 
       {analysis.observed_facts.length > 0 && (
         <div>

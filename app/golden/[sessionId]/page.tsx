@@ -79,9 +79,17 @@ export default function GoldenPage() {
   }
 
   const progressPct = Math.round((done / total) * 100)
+  const nextStep = steps.find((s) => s.status !== 'DONE')
 
   return (
     <main className="flex flex-col gap-6">
+      {nextStep && (
+        <div className="rounded-xl border-2 border-red-600 bg-red-50 p-4">
+          <p className="text-sm font-bold text-red-700">🚨 다음 할 일</p>
+          <p className="mt-1 font-semibold">{nextStep.title}</p>
+        </div>
+      )}
+
       <div>
         <p className="text-sm text-gray-500">경과 시간: {elapsedMin}분</p>
         <div className="mt-2 h-3 w-full overflow-hidden rounded-full bg-gray-200">

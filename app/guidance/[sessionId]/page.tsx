@@ -103,8 +103,8 @@ export default function GuidancePage() {
           <span className="whitespace-pre-line">{view.message}</span>
         </Banner>
         <p className="text-sm text-gray-500">
-          공식 대응 절차 데이터가 아직 준비되지 않았습니다. 급한 경우 112(경찰) 또는
-          금융회사 고객센터로 즉시 연락해 주세요.
+          공식 대응 절차 데이터가 아직 준비되지 않았습니다. 이용하시는 금융회사
+          고객센터 또는 가까운 경찰서로 직접 문의해 주세요.
         </p>
       </main>
     )
@@ -113,7 +113,12 @@ export default function GuidancePage() {
   const { riskLevel, compoundNotice, steps } = view
   return (
     <main className="flex flex-col gap-6">
-      <RiskBadge level={riskLevel} />
+      <div className="flex flex-wrap items-center gap-2">
+        <RiskBadge level={riskLevel} />
+        <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-800">
+          ✓ 공식 출처 기반 안내
+        </span>
+      </div>
 
       {compoundNotice && (
         <Banner kind="warning">
@@ -126,10 +131,23 @@ export default function GuidancePage() {
       <ul className="flex flex-col gap-4">
         {steps.map((step, idx) => {
           const isDone = doneSteps.has(step.step_id)
+          const isTopPriority = idx === 0 && !isDone
           return (
-            <li key={step.step_id} className="rounded-xl border-2 border-gray-200 p-4">
+            <li
+              key={step.step_id}
+              className={`rounded-xl border-2 p-4 ${
+                isTopPriority ? 'border-red-600 bg-red-50' : 'border-gray-200'
+              }`}
+            >
+              {isTopPriority && (
+                <p className="mb-2 text-sm font-bold text-red-700">🚨 지금 가장 먼저 하세요</p>
+              )}
               <div className="flex items-start gap-3">
-                <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-700 text-sm font-bold text-white">
+                <span
+                  className={`mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${
+                    isTopPriority ? 'bg-red-600' : 'bg-blue-700'
+                  }`}
+                >
                   {idx + 1}
                 </span>
                 <div className="flex-1">
@@ -168,9 +186,9 @@ export default function GuidancePage() {
                     <button
                       type="button"
                       onClick={() => toggleExpanded(step.step_id)}
-                      className="mt-2 text-sm text-gray-500 underline"
+                      className="mt-2 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600"
                     >
-                      근거 보기
+                      📄 근거 보기 — 이 안내가 어디서 왔는지 확인
                     </button>
                   )}
                   {expanded.has(step.step_id) && (
