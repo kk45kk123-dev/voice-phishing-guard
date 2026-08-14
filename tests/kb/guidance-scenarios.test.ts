@@ -146,7 +146,117 @@ describe('STEP 9: hallucinated contact 정보 차단 (구조적 방지)', () => 
     expect(steps[0]?.title).toBe('원본 제목 그대로')
     expect(steps[0]?.why).toBe('원본 이유 그대로')
     expect(steps[0]?.channels).toEqual([
-      { label: '테스트센터', type: 'PHONE', value: '000-000-0000', source_org: 'TEST_ORG' },
+      {
+        label: '테스트센터',
+        type: 'PHONE',
+        value: '000-000-0000',
+        source_org: 'TEST_ORG',
+        is_primary_bank_match: false,
+      },
     ])
+  })
+})
+
+describe('STEP 9: user_context 개인화 (주거래 금융회사 채널 우선 표시)', () => {
+  it('primary_bank과 source_org가 일치하는 채널이 is_primary_bank_match=true로 표시되고 앞에 온다', async () => {
+    const docId = insertDocument('https://example.go.kr/g', 'T1')
+    const chunkId = insertChunk(docId, 1)
+    const otherBank = {
+      id: crypto.randomUUID(),
+      label: '다른은행 고객센터',
+      type: 'PHONE',
+      value: '000-111-1111',
+      source_org: 'OTHER_BANK',
+      active: true,
+    }
+    const myBank = {
+      id: crypto.randomUUID(),
+      label: 'TEST은행 고객센터',
+      type: 'PHONE',
+      value: '000-222-2222',
+      source_org: 'TEST은행',
+      active: true,
+    }
+    db.table('contact_registry').rows.push(otherBank, myBank)
+    db.table('playbook_steps').rows.push({
+      step_id: 'PB_H_01',
+      state_code: 'MONEY_SENT',
+      seq: 1,
+      title: 't',
+      why: null,
+      kb_chunk_ids: [chunkId],
+      contact_ids: [otherBank.id, myBank.id],
+      triggers_deadline: false,
+      deadline_rule: null,
+      verified: true,
+    })
+
+    const steps = await getGuidanceSteps(db as unknown as SupabaseClient, ['MONEY_SENT'], {
+      isProduction: true,
+      primaryBank: 'TEST은행',
+    })
+
+    expect(steps[0]?.channels[0]?.source_org).toBe('TEST은행')
+    expect(steps[0]?.channels[0]?.is_primary_bank_match).toBe(true)
+    expect(steps[0]?.channels[1]?.is_primary_bank_match).toBe(false)
+  })
+
+  it('primary_bank을 주지 않으면 전부 is_primary_bank_match=false, 원래 순서 유지', async () => {
+    const docId = insertDocument('https://example.go.kr/h', 'T1')
+    const chunkId = insertChunk(docId, 1)
+    const contact = {
+      id: crypto.randomUUID(),
+      label: 'c',
+      type: 'PHONE',
+      value: '000-333-3333',
+      source_org: 'ANY_ORG',
+      active: true,
+    }
+    db.table('contact_registry').rows.push(contact)
+    db.table('playbook_steps').rows.push({
+      step_id: 'PB_I_01',
+      state_code: 'MONEY_SENT',
+      seq: 1,
+      title: 't',
+      why: null,
+      kb_chunk_ids: [chunkId],
+      contact_ids: [contact.id],
+      triggers_deadline: false,
+      deadline_rule: null,
+      verified: true,
+    })
+
+    const steps = await getGuidanceSteps(db as unknown as SupabaseClient, ['MONEY_SENT'], {
+      isProduction: true,
+    })
+    expect(steps[0]?.channels[0]?.is_primary_bank_match).toBe(false)
+  })
+
+  it('개인화는 절차(title/why/evidence)를 절대 바꾸지 않는다 — 채널 순서만 바뀐다', async () => {
+    const docId = insertDocument('https://example.go.kr/i', 'T1')
+    const chunkId = insertChunk(docId, 1)
+    db.table('playbook_steps').rows.push({
+      step_id: 'PB_J_01',
+      state_code: 'MONEY_SENT',
+      seq: 1,
+      title: '변하지 않는 제목',
+      why: '변하지 않는 이유',
+      kb_chunk_ids: [chunkId],
+      contact_ids: [],
+      triggers_deadline: false,
+      deadline_rule: null,
+      verified: true,
+    })
+
+    const withoutCtx = await getGuidanceSteps(db as unknown as SupabaseClient, ['MONEY_SENT'], {
+      isProduction: true,
+    })
+    const withCtx = await getGuidanceSteps(db as unknown as SupabaseClient, ['MONEY_SENT'], {
+      isProduction: true,
+      primaryBank: 'ANY',
+    })
+    expect(withCtx[0]?.title).toBe(withoutCtx[0]?.title)
+    expect(withCtx[0]?.why).toBe(withoutCtx[0]?.why)
+    expect(withCtx[0]?.evidence).toEqual(withoutCtx[0]?.evidence)
   })
 })

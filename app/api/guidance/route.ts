@@ -40,6 +40,7 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
   const ordered = orderStates(analysis.states)
   const steps = await getGuidanceSteps(db, ordered, {
     isProduction: process.env.NODE_ENV === 'production',
+    primaryBank: parsed.data.user_context?.primary_bank,
   })
 
   if (steps.length === 0) {

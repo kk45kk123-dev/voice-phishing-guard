@@ -14,6 +14,9 @@ export interface GuidanceChannel {
   type: 'PHONE' | 'URL'
   value: string
   source_org: string
+  /** user_context.primary_bank과 source_org가 일치하면 true. 정렬/강조용 —
+   * "개인화하면 피해가 줄어든다" 같은 효과를 주장하지 않는다. 순서만 바꾼다. */
+  is_primary_bank_match: boolean
 }
 
 export interface GuidanceEvidence {
@@ -55,10 +58,22 @@ export function isStepRenderable(
   return hasNonT3Evidence
 }
 
+// STEP 9 개인화(범위: 주거래 금융회사만): source_org가 사용자가 밝힌
+// primary_bank와 일치하는 채널을 표시만 해준다. 새 사실을 만들지 않고,
+// 이미 검증된 contact_registry 항목의 "순서"만 바꾼다.
+function isPrimaryBankMatch(sourceOrg: string, primaryBank?: string): boolean {
+  if (!primaryBank) return false
+  const a = sourceOrg.trim().toLowerCase()
+  const b = primaryBank.trim().toLowerCase()
+  if (a.length === 0 || b.length === 0) return false
+  return a.includes(b) || b.includes(a)
+}
+
 export function assembleGuidanceStep(
   step: PlaybookStepRecord,
   chunksById: Map<string, KbChunkRecord>,
-  contactsById: Map<string, ContactRecord>
+  contactsById: Map<string, ContactRecord>,
+  primaryBank?: string
 ): GuidanceStep {
   const evidence: GuidanceEvidence[] = step.kb_chunk_ids
     .map((id) => chunksById.get(id))
@@ -75,7 +90,15 @@ export function assembleGuidanceStep(
   const channels: GuidanceChannel[] = step.contact_ids
     .map((id) => contactsById.get(id))
     .filter((c): c is ContactRecord => Boolean(c))
-    .map((c) => ({ label: c.label, type: c.type, value: c.value, source_org: c.source_org }))
+    .map((c) => ({
+      label: c.label,
+      type: c.type,
+      value: c.value,
+      source_org: c.source_org,
+      is_primary_bank_match: isPrimaryBankMatch(c.source_org, primaryBank),
+    }))
+    // 일치하는 채널을 앞으로 — 그 외 원래 순서는 유지(stable sort)
+    .sort((a, b) => Number(b.is_primary_bank_match) - Number(a.is_primary_bank_match))
 
   return {
     step_id: step.step_id,
@@ -93,7 +116,7 @@ export function assembleGuidanceStep(
 export async function getGuidanceSteps(
   db: SupabaseClient,
   orderedStates: State[],
-  opts: { isProduction: boolean }
+  opts: { isProduction: boolean; primaryBank?: string }
 ): Promise<GuidanceStep[]> {
   const rawSteps = await fetchPlaybookStepsForStates(db, orderedStates)
 
@@ -117,5 +140,5 @@ export async function getGuidanceSteps(
   for (const list of byState.values()) list.sort((a, b) => a.seq - b.seq)
 
   const ordered = orderedStates.flatMap((state) => byState.get(state) ?? [])
-  return ordered.map((step) => assembleGuidanceStep(step, chunksById, contactsById))
+  return ordered.map((step) => assembleGuidanceStep(step, chunksById, contactsById, opts.primaryBank))
 }
