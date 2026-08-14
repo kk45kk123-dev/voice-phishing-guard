@@ -1,0 +1,14 @@
+# 검증된 연락처 화이트리스트 (Guard G1의 근거, contact_registry 시드 데이터).
+# DEV_SPEC.md §12 병행 트랙 1(8/16까지)에서 채운다. 지금은 빈 틀만 존재한다.
+# T1/T2 출처만 허용, T3 금지 (§5-1, §9-2 contact_registry.tier CHECK).
+#
+# 항목 예시 (실제 데이터 아님 — 채우기 전까지 참고용 형식):
+# - label: ""
+#   type: PHONE       # PHONE | URL
+#   value: ""
+#   source_org: ""
+#   source_url: ""
+#   tier: T1          # T1 | T2 (T3 금지)
+#   collected_at: "2026-08-14"
+
+contacts: []
