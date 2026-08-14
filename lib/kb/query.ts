@@ -59,17 +59,23 @@ export interface KbChunkRecord {
 }
 
 // source_org/source_url/tier/collected_at은 kb_chunks가 아니라 kb_documents에
-// 있다(§9-2 DDL). document_id FK로 조인해서 근거 표시(§8 [근거 보기])에
-// 필요한 4개 필드를 한 번에 가져온다.
-interface KbChunkJoinRow {
-  id: string
-  raw_text: string
-  kb_documents: {
-    source_org: string
-    source_url: string
-    tier: 'T1' | 'T2' | 'T3'
-    collected_at: string
-  } | null
+// 있다(§9-2 DDL). 처음엔 PostgREST 중첩 select(`kb_chunks(...kb_documents(...))`)
+// 로 한 번에 가져왔는데, 실제 Supabase에 한 번도 실행해본 적이 없어 FK
+// 관계 이름 자동 인식이 실패할 위험이 있었다(Phase 2 STEP 1 검토에서 지적,
+// 인메모리 테스트로 재현됨 — 가짜 DB도 그 조인을 흉내 낼 방법이 마땅치
+// 않았다). 조인 없이 평범한 쿼리 두 번 + JS 조인으로 바꿔 그 위험 자체를
+// 없앴다.
+async function fetchKbDocumentsByIds(
+  db: SupabaseClient,
+  ids: string[]
+): Promise<Map<string, { source_org: string; source_url: string; tier: 'T1' | 'T2' | 'T3'; collected_at: string }>> {
+  if (ids.length === 0) return new Map()
+  const { data, error } = await db
+    .from('kb_documents')
+    .select('id, source_org, source_url, tier, collected_at')
+    .in('id', ids)
+  if (error) throw error
+  return new Map((data ?? []).map((row) => [row.id as string, row]))
 }
 
 export async function fetchKbChunksByIds(
@@ -79,22 +85,27 @@ export async function fetchKbChunksByIds(
   if (ids.length === 0) return []
   const { data, error } = await db
     .from('kb_chunks')
-    .select('id, raw_text, kb_documents(source_org, source_url, tier, collected_at)')
+    .select('id, raw_text, document_id')
     .in('id', ids)
   if (error) throw error
-  const rows = (data ?? []) as unknown as KbChunkJoinRow[]
-  return rows
-    .filter((row): row is KbChunkJoinRow & { kb_documents: NonNullable<KbChunkJoinRow['kb_documents']> } =>
-      row.kb_documents !== null
-    )
-    .map((row) => ({
-      id: row.id,
-      raw_text: row.raw_text,
-      source_org: row.kb_documents.source_org,
-      source_url: row.kb_documents.source_url,
-      tier: row.kb_documents.tier,
-      collected_at: row.kb_documents.collected_at,
-    }))
+  const chunks = (data ?? []) as Array<{ id: string; raw_text: string; document_id: string }>
+
+  const documentsById = await fetchKbDocumentsByIds(db, [...new Set(chunks.map((c) => c.document_id))])
+
+  return chunks
+    .map((chunk) => {
+      const doc = documentsById.get(chunk.document_id)
+      if (!doc) return null
+      return {
+        id: chunk.id,
+        raw_text: chunk.raw_text,
+        source_org: doc.source_org,
+        source_url: doc.source_url,
+        tier: doc.tier,
+        collected_at: doc.collected_at,
+      }
+    })
+    .filter((c): c is KbChunkRecord => c !== null)
 }
 
 export interface ContactRecord {
