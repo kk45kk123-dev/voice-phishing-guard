@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:integration": "vitest run tests/integration",
     "verify:contacts": "tsx scripts/verify-contacts.ts",
+    "verify:kb": "tsx scripts/verify-kb.ts",
     "seed:kb": "tsx scripts/seed-kb.ts"
   },
   "dependencies": {
