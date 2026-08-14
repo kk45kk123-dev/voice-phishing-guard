@@ -1,0 +1,25 @@
+state_code: MONEY_SENT
+steps:
+  - step_id: PB_MONEY_SENT_01
+    seq: 1
+    title: "송금·입금 금융회사 콜센터에 즉시 전화해 계좌 지급정지를 요청하세요"
+    why: "경찰청 전기통신금융사기 통합대응단 공식 안내에 따른 즉시 조치입니다."
+    kb_chunk_refs:
+      - "https://www.counterscam112.go.kr/board/CONTENT_000000000005.do#1"
+    contact_refs: []
+    triggers_deadline: false
+    deadline_rule: null
+    verified: true
+    verified_at: "2026-08-14"
+  - step_id: PB_MONEY_SENT_02
+    seq: 2
+    title: "112에 신고해 경찰관 출동을 요청하세요"
+    why: "경찰청 전기통신금융사기 통합대응단 공식 안내에 따른 즉시 조치입니다."
+    kb_chunk_refs:
+      - "https://www.counterscam112.go.kr/board/CONTENT_000000000005.do#2"
+    contact_refs:
+      - "112"
+    triggers_deadline: false
+    deadline_rule: null
+    verified: true
+    verified_at: "2026-08-14"

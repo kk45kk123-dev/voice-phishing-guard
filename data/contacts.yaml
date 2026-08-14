@@ -1,21 +1,27 @@
 # 검증된 연락처 화이트리스트 (Guard G1의 근거, contact_registry 시드 데이터).
-# DEV_SPEC.md §12 병행 트랙 1(8/16까지)에서 채운다. 지금은 빈 틀만 존재한다.
 # T1/T2 출처만 허용, T3 금지 (§5-1, §9-2 contact_registry.tier CHECK).
 #
-# 항목 예시 (실제 데이터 아님 — 채우기 전까지 참고용 형식):
-# - label: ""
-#   type: PHONE       # PHONE | URL
-#   value: ""
-#   source_org: ""
-#   source_url: ""
-#   tier: T1          # T1 | T2 (T3 금지)
-#   collected_at: "2026-08-14"
-#   verified_at: "2026-08-14"      # 선택. 0002_kb_metadata.sql
-#   effective_from: "2026-02-01"   # 선택
-#   category: ""                   # 선택. enum 미확정(보고 대기)
-#   authority: ""                  # 선택
-#
-# Phase 2 STEP 4 결정: 구조만 먼저 만들고 데이터는 비워둔다. 채울 때는
-# scripts/verify-contacts.ts로 먼저 검증한 뒤 scripts/seed-kb.ts로 적재한다.
+# 2026-08-14 사용자 제공 Source Mapping 기준으로 최초 2건을 등록한다.
+# 1332(금융감독원)는 유일한 근거 문서(금융민원상담 안내, D10)의 공식 URL이
+# 아직 미확인이라 보류한다 — data/PENDING_SOURCE_URL.md 참고.
+# 1566-1188은 CONFLICT/UNCLEAR로 판정되어 등록하지 않는다.
 
-contacts: []
+contacts:
+  - label: "경찰 긴급신고"
+    type: PHONE
+    value: "112"
+    source_org: "경찰청"
+    source_url: "https://www.counterscam112.go.kr/board/CONTENT_000000000005.do"
+    tier: T1
+    collected_at: "2026-08-14"
+    verified_at: "2026-08-14"
+    authority: "경찰청"
+  - label: "전기통신금융사기 통합대응단"
+    type: PHONE
+    value: "1394"
+    source_org: "경찰청 전기통신금융사기 통합대응단"
+    source_url: "https://www.counterscam112.go.kr/"
+    tier: T1
+    collected_at: "2026-08-14"
+    verified_at: "2026-08-14"
+    authority: "경찰청 전기통신금융사기 통합대응단"

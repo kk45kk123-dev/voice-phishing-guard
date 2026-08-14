@@ -1,0 +1,13 @@
+state_code: PII_DISCLOSED
+steps:
+  - step_id: PB_PII_DISCLOSED_01
+    seq: 1
+    title: "금융감독원 개인정보 노출자 사고예방시스템에 피해 사실을 등록하세요"
+    why: "등록하면 신규 계좌 개설, 신용카드 발급 등 명의도용 거래를 제한할 수 있습니다."
+    kb_chunk_refs:
+      - "https://pd.fss.or.kr/#1"
+    contact_refs: []
+    triggers_deadline: false
+    deadline_rule: null
+    verified: true
+    verified_at: "2026-08-14"

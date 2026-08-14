@@ -25,6 +25,9 @@ export const ContactSeedSchema = z.object({
   source_url: z.string().url(),
   tier: ContactTierSchema,
   collected_at: DateStringSchema,
+  // contact_registry.active는 0001부터 이미 존재하는 컬럼(기본값 true).
+  // 오래된 번호를 코드 수정 없이 비활성화할 수 있도록 seed 형식에도 노출한다.
+  active: z.boolean().default(true).optional(),
   ...MetadataFields,
 })
 export type ContactSeed = z.infer<typeof ContactSeedSchema>
