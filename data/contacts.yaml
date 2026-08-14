@@ -10,5 +10,12 @@
 #   source_url: ""
 #   tier: T1          # T1 | T2 (T3 금지)
 #   collected_at: "2026-08-14"
+#   verified_at: "2026-08-14"      # 선택. 0002_kb_metadata.sql
+#   effective_from: "2026-02-01"   # 선택
+#   category: ""                   # 선택. enum 미확정(보고 대기)
+#   authority: ""                  # 선택
+#
+# Phase 2 STEP 4 결정: 구조만 먼저 만들고 데이터는 비워둔다. 채울 때는
+# scripts/verify-contacts.ts로 먼저 검증한 뒤 scripts/seed-kb.ts로 적재한다.
 
 contacts: []
