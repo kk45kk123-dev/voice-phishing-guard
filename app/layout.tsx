@@ -12,7 +12,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        <div className="mx-auto min-h-screen max-w-md px-4 py-6">{children}</div>
+      </body>
     </html>
   )
 }

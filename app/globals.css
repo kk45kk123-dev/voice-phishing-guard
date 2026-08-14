@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  font-size: 18px;
+}
+
+body {
+  @apply bg-white text-gray-900;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 위험 상황에서 손이 떨리거나 이동 중일 수 있어 터치 타깃을 크게 유지한다. */
+button,
+a.button {
+  min-height: 48px;
+}
+
+:focus-visible {
+  outline: 3px solid #1d4ed8;
+  outline-offset: 2px;
+}
