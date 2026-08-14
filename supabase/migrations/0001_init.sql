@@ -1,3 +1,11 @@
+-- ── 확장 ────────────────────────────────────────────────
+-- kb_chunks.embedding(vector) 타입에 필요. Supabase 신규 프로젝트는 기본
+-- 비활성화 상태이므로 여기서 명시적으로 활성화한다. Supabase 문서 권장대로
+-- extensions 스키마에 설치(공개 스키마 오염 방지). Supabase 관리형 역할의
+-- 기본 search_path에 extensions가 포함되어 있어 아래 vector(1536) 등 비한정
+-- 타입 참조가 그대로 동작한다.
+create extension if not exists vector with schema extensions;
+
 -- ── 지식베이스 ──────────────────────────────────────────
 create table kb_documents (
   id           uuid primary key default gen_random_uuid(),
@@ -15,7 +23,8 @@ create table kb_chunks (
   document_id  uuid not null references kb_documents(id) on delete cascade,
   seq          int  not null,
   raw_text     text not null check (char_length(raw_text) <= 800),
-  embedding    vector(1536),
+  embedding    vector(1536), -- 임시값(§9-2 원안 유지). embedding provider 미확정.
+                              -- provider 선정 시 차원 일치 여부 재검증 필요.
   created_at   timestamptz default now()
 );
 create index kb_chunks_doc_idx on kb_chunks(document_id, seq);
@@ -107,12 +116,21 @@ create table guard_logs (
 );
 
 -- ── RLS ──────────────────────────────────────────────────
--- DEV_SPEC.md §9-2: "모든 테이블 RLS 활성화. sessions·session_*는 session_id
--- 일치 시에만 접근. kb_*·playbook_steps·contact_registry는 읽기 전용 공개,
--- 쓰기는 service role만."
---
--- ⚠️ 미구현: DEV_SPEC.md는 이 요구사항을 산문으로만 명시했고, 구체적인
--- CREATE POLICY 문은 스펙에 없다. 이 앱은 Supabase Auth(로그인)가 없어
--- session_id를 어떤 클레임/컨텍스트로 대조할지가 정의되어 있지 않다.
--- Phase 0 범위("DDL을 그대로 넣는다")를 벗어나므로 임의로 정책을 만들지
--- 않고 보고한다 — Phase 1(lib/db/client.ts) 이전에 정책 설계를 확인 필요.
+-- 확정 아키텍처: 브라우저 → Next.js API Route → Supabase 서버 클라이언트
+-- (service_role) → Postgres. 프론트엔드는 Supabase를 직접 호출하지 않는다.
+-- 그래서 anon/authenticated 정책은 하나도 만들지 않는다 — 이 두 역할로 이
+-- DB에 접근할 정상 경로 자체가 없다. RLS를 켜두는 이유는 그 경로가 실수로
+-- 생기더라도(예: 클라이언트에 anon 키가 잘못 노출되는 경우) 기본 거부로
+-- 막기 위한 안전망이다.
+-- service_role은 RLS를 우회하므로, 이 정책들이 "세션을 검증"하는 것이
+-- 아니다. 실질적인 세션 접근 통제(session_id 소유 확인, 만료 확인, 하위
+-- 테이블 스코프 제한)는 Next.js 서버 계층(app/api/**, lib/db/)에서 수행한다.
+alter table kb_documents      enable row level security;
+alter table kb_chunks         enable row level security;
+alter table contact_registry  enable row level security;
+alter table playbook_steps    enable row level security;
+alter table sessions          enable row level security;
+alter table session_analyses  enable row level security;
+alter table session_steps     enable row level security;
+alter table session_deadlines enable row level security;
+alter table guard_logs        enable row level security;
