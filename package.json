@@ -12,9 +12,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:integration": "vitest run tests/integration",
-    "verify:contacts": "tsx scripts/verify-contacts.ts",
-    "verify:kb": "tsx scripts/verify-kb.ts",
-    "seed:kb": "tsx scripts/seed-kb.ts"
+    "verify:contacts": "tsx --env-file-if-exists=.env.local scripts/verify-contacts.ts",
+    "verify:kb": "tsx --env-file-if-exists=.env.local scripts/verify-kb.ts",
+    "seed:kb": "tsx --env-file-if-exists=.env.local scripts/seed-kb.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
