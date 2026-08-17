@@ -186,15 +186,21 @@ describe.skipIf(!hasLiveDb)('실제 Supabase 통합 테스트', () => {
       expect(res.status).toBe(409)
     })
 
-    it('KB 데이터가 없으면 fallback을 반환한다 (§5-3, data/kb 비어있음)', async () => {
+    it('요청된 state에 seed된 playbook이 없으면 fallback을 반환한다 (§5-3)', async () => {
+      // LINK_CLICKED는 STATE_KEYWORDS에서 '링크를 눌렀'에 매핑되고,
+      // data/playbooks/에 아직 이 state용 파일이 없다 — 즉 seed된
+      // playbook_steps가 하나도 없는 state다. MONEY_SENT/APP_INSTALLED/
+      // PII_DISCLOSED처럼 이미 실 데이터가 seed된 state를 쓰면 §5-3에 따라
+      // 정당하게 fallback:false가 나오므로(버그 아님) 이 테스트가 검증하려는
+      // "근거 없는 state는 fallback한다"는 조건을 더 이상 재현하지 못한다.
       const { POST: analyze } = await import('@/app/api/analyze/route')
       const { POST: guidance } = await import('@/app/api/guidance/route')
       const id = await createRealSession()
       await analyze(
         jsonReq('/api/analyze', 'POST', {
           session_id: id,
-          text: '송금했습니다.',
-          entry_path: 'ALREADY_SENT',
+          text: '링크를 눌렀습니다.',
+          entry_path: 'SELF_SUSPICION',
         })
       )
       const res = await guidance(jsonReq('/api/guidance', 'POST', { session_id: id }))

@@ -45,8 +45,9 @@ export const POST = withApiErrorHandling(async (req: NextRequest) => {
 
   if (steps.length === 0) {
     // §5-3: verified 근거가 하나도 없으면 해당 step을 렌더링하지 않고
-    // Fallback을 보여준다. 현재는 KB 데이터가 아직 없어(Phase 5 선행 조건
-    // 미충족) 모든 요청이 이 경로를 탄다 — 버그가 아니라 의도된 동작이다.
+    // Fallback을 보여준다. state별로 독립 평가되므로, 아직 playbook_steps가
+    // seed되지 않은 state로 요청하면 항상 이 경로를 탄다 — 버그가 아니라
+    // 의도된 동작이다.
     return NextResponse.json({
       fallback: true,
       reason: 'NO_VERIFIED_STEPS',
