@@ -4,10 +4,21 @@
 
 html {
   font-size: 18px;
+  /* 시스템 한글 서체를 우선한다 — 외부 폰트 fetch 없이(오프라인/느린
+     네트워크에서도 항상 즉시 렌더) 플랫폼별로 가장 읽기 좋은 한글 서체를
+     쓴다. */
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    'Apple SD Gothic Neo',
+    'Malgun Gothic',
+    'Noto Sans KR',
+    system-ui,
+    sans-serif;
 }
 
 body {
-  @apply bg-white text-gray-900;
+  @apply bg-slate-50 text-gray-900;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -15,6 +26,17 @@ body {
 button,
 a.button {
   min-height: 48px;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    opacity 150ms ease,
+    transform 100ms ease;
+}
+
+button:active:not(:disabled),
+a.button:active {
+  transform: scale(0.98);
 }
 
 :focus-visible {
