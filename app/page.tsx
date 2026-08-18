@@ -47,7 +47,7 @@ export default function Home() {
           type="button"
           onClick={() => startSession('suspicious')}
           disabled={pending !== null}
-          className="w-full rounded-xl bg-blue-700 px-6 py-4 text-lg font-bold text-white disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-700 px-6 py-4 hover:bg-blue-800 text-lg font-bold text-white disabled:opacity-60"
         >
           {pending === 'suspicious' ? '세션을 만드는 중...' : '지금 의심스러워요'}
         </button>
@@ -55,7 +55,7 @@ export default function Home() {
           type="button"
           onClick={() => startSession('already-happened')}
           disabled={pending !== null}
-          className="w-full rounded-xl border-2 border-red-700 bg-red-50 px-6 py-4 text-lg font-bold text-red-800 disabled:opacity-60"
+          className="w-full rounded-xl border-2 border-red-700 bg-red-50 px-6 py-4 hover:bg-red-100 text-lg font-bold text-red-800 disabled:opacity-60"
         >
           {pending === 'already-happened' ? '세션을 만드는 중...' : '이미 당했어요'}
         </button>

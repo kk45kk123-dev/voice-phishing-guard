@@ -284,7 +284,7 @@ export default function AnalysisPage() {
           type="button"
           onClick={submitManual}
           disabled={manualSubmitting}
-          className="w-full rounded-xl bg-blue-700 px-6 py-4 text-lg font-bold text-white disabled:opacity-60"
+          className="w-full rounded-xl bg-blue-700 px-6 py-4 hover:bg-blue-800 text-lg font-bold text-white disabled:opacity-60"
         >
           {manualSubmitting ? '저장하는 중...' : '이 내용으로 진행하기'}
         </button>
@@ -298,7 +298,7 @@ export default function AnalysisPage() {
     <main className="flex flex-col gap-6">
       {isDemo && (
         <Banner kind="warning">
-          ⚠️ 데모 모드: 실제 AI 분석이 아닌 규칙 기반 임시 분석입니다 (LLM 연동 전).
+          데모 모드: 실제 AI 분석이 아닌 규칙 기반 임시 분석입니다 (LLM 연동 전).
         </Banner>
       )}
 
@@ -309,7 +309,7 @@ export default function AnalysisPage() {
         <button
           type="button"
           onClick={() => router.push(`/guidance/${sessionId}`)}
-          className="w-full rounded-xl bg-red-600 px-6 py-4 text-lg font-bold text-white"
+          className="w-full rounded-xl bg-red-600 px-6 py-4 hover:bg-red-700 text-lg font-bold text-white"
         >
           🚨 지금 바로 대응 방법 확인하기
         </button>
@@ -365,7 +365,7 @@ export default function AnalysisPage() {
       <button
         type="button"
         onClick={() => router.push(`/guidance/${sessionId}`)}
-        className="w-full rounded-xl bg-blue-700 px-6 py-4 text-lg font-bold text-white"
+        className="w-full rounded-xl bg-blue-700 px-6 py-4 hover:bg-blue-800 text-lg font-bold text-white"
       >
         다음: 행동요령 보기
       </button>

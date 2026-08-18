@@ -77,7 +77,7 @@ export default function SituationPage() {
         type="button"
         onClick={() => submit(text)}
         disabled={submitting || text.trim().length === 0}
-        className="w-full rounded-xl bg-blue-700 px-6 py-4 text-lg font-bold text-white disabled:opacity-60"
+        className="w-full rounded-xl bg-blue-700 px-6 py-4 hover:bg-blue-800 text-lg font-bold text-white disabled:opacity-60"
       >
         분석 시작하기
       </button>
@@ -90,7 +90,7 @@ export default function SituationPage() {
             type="button"
             onClick={() => submit(sample.text)}
             disabled={submitting}
-            className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-left text-sm disabled:opacity-60"
+            className="w-full rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-left text-sm hover:border-blue-300 hover:bg-blue-50/60 disabled:opacity-60 disabled:hover:border-gray-200 disabled:hover:bg-gray-50"
           >
             <span className="font-semibold">{sample.label}</span>
             <br />

@@ -116,7 +116,7 @@ export default function GoldenPage() {
               type="button"
               onClick={() => setStatus(step.step_id, step.status === 'DONE' ? 'PENDING' : 'DONE')}
               disabled={updating === step.step_id}
-              className="shrink-0 rounded-lg border-2 border-blue-700 px-4 py-2 text-sm font-bold text-blue-700 disabled:opacity-50"
+              className="shrink-0 rounded-lg border-2 border-blue-700 px-4 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50 disabled:opacity-50 disabled:hover:bg-transparent"
             >
               {step.status === 'DONE' ? '완료 취소' : '완료'}
             </button>

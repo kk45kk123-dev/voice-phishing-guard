@@ -14,7 +14,7 @@ import { withApiErrorHandling } from '@/lib/api/handler'
 export const dynamic = 'force-dynamic'
 
 const FALLBACK_MESSAGE =
-  '⚠️ 이 상황에 대한 공식 안내를 아직 확인하지 못했습니다.\n\n정확한 안내를 위해 공식 채널로 직접 문의해 주세요.'
+  '이 상황에 대한 공식 안내를 아직 확인하지 못했습니다.\n\n정확한 안내를 위해 공식 채널로 직접 문의해 주세요.'
 
 // POST /api/guidance — §9-1. Rule Engine → playbook 조회 → RAG 청크 조회 →
 // (AI-B 재작성/Guard는 Phase 6·8 범위, 이번 Phase 1에는 없음) → 렌더링.

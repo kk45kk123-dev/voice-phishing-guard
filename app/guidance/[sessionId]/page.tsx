@@ -183,7 +183,7 @@ export default function GuidancePage() {
         <button
           type="button"
           onClick={submitContext}
-          className="w-full rounded-xl bg-blue-700 px-6 py-4 text-lg font-bold text-white"
+          className="w-full rounded-xl bg-blue-700 px-6 py-4 hover:bg-blue-800 text-lg font-bold text-white"
         >
           적용하고 계속하기
         </button>
@@ -329,7 +329,7 @@ export default function GuidancePage() {
                     type="button"
                     onClick={() => markDone(step.step_id)}
                     disabled={isDone || updating === step.step_id}
-                    className="mt-3 w-full rounded-lg border-2 border-blue-700 py-2 text-sm font-bold text-blue-700 disabled:border-gray-300 disabled:text-gray-400"
+                    className="mt-3 w-full rounded-lg border-2 border-blue-700 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50 disabled:border-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent"
                   >
                     {isDone ? '완료됨' : updating === step.step_id ? '처리 중...' : '완료로 표시'}
                   </button>
@@ -343,7 +343,7 @@ export default function GuidancePage() {
       <button
         type="button"
         onClick={() => router.push(`/golden/${sessionId}`)}
-        className="w-full rounded-xl bg-blue-700 px-6 py-4 text-lg font-bold text-white"
+        className="w-full rounded-xl bg-blue-700 px-6 py-4 hover:bg-blue-800 text-lg font-bold text-white"
       >
         다음: 진행 상황 확인
       </button>
