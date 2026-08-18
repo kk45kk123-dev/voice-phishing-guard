@@ -5,13 +5,15 @@ import { useRouter } from 'next/navigation'
 import { saveSessionId } from '@/lib/session-client'
 import { Banner } from '@/app/_components/Banner'
 
+type ButtonKey = 'suspicious' | 'already-happened'
+
 export default function Home() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [pending, setPending] = useState<ButtonKey | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  async function startSession() {
-    setLoading(true)
+  async function startSession(key: ButtonKey) {
+    setPending(key)
     setError(null)
     try {
       const res = await fetch('/api/session', { method: 'POST' })
@@ -21,7 +23,7 @@ export default function Home() {
       router.push(`/entry?sid=${data.session_id}`)
     } catch {
       setError('세션을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.')
-      setLoading(false)
+      setPending(null)
     }
   }
 
@@ -43,19 +45,19 @@ export default function Home() {
       <div className="flex flex-col gap-3">
         <button
           type="button"
-          onClick={startSession}
-          disabled={loading}
+          onClick={() => startSession('suspicious')}
+          disabled={pending !== null}
           className="w-full rounded-xl bg-blue-700 px-6 py-4 text-lg font-bold text-white disabled:opacity-60"
         >
-          {loading ? '세션을 만드는 중...' : '지금 의심스러워요'}
+          {pending === 'suspicious' ? '세션을 만드는 중...' : '지금 의심스러워요'}
         </button>
         <button
           type="button"
-          onClick={startSession}
-          disabled={loading}
+          onClick={() => startSession('already-happened')}
+          disabled={pending !== null}
           className="w-full rounded-xl border-2 border-red-700 bg-red-50 px-6 py-4 text-lg font-bold text-red-800 disabled:opacity-60"
         >
-          {loading ? '세션을 만드는 중...' : '이미 당했어요'}
+          {pending === 'already-happened' ? '세션을 만드는 중...' : '이미 당했어요'}
         </button>
       </div>
 

@@ -25,4 +25,9 @@ export const SITUATION_SAMPLES: SituationSample[] = [
     label: '대출빙자 문자, 아직 아무것도 안 함',
     text: '저금리로 대환대출 해준다는 문자를 받았는데 이상해서 링크는 누르지 않았어요.',
   },
+  {
+    id: 'acquaintance-app-and-pii',
+    label: '가족 사칭 + 앱 설치 + 개인정보 제공',
+    text: '아들이라면서 전화가 와서 폰이 고장났다고 원격 앱을 설치하라고 했어요. 시키는 대로 앱을 설치했고, 확인이 필요하다고 해서 신분증 사진도 찍어서 보냈습니다.',
+  },
 ]
