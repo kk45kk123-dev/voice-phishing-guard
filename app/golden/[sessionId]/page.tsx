@@ -104,7 +104,7 @@ export default function GoldenPage() {
         {steps.map((step) => (
           <li
             key={step.step_id}
-            className="flex items-center justify-between gap-3 rounded-xl border-2 border-gray-200 p-4"
+            className="flex items-center justify-between gap-3 rounded-xl border-2 border-gray-200 bg-white p-4 shadow-sm"
           >
             <div>
               <p className={step.status === 'DONE' ? 'text-gray-400 line-through' : 'font-medium'}>

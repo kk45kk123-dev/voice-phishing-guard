@@ -68,7 +68,7 @@ export default function EntryPage() {
             type="button"
             onClick={() => choose(opt.code)}
             disabled={pending !== null}
-            className="w-full rounded-xl border-2 border-gray-300 bg-white px-5 py-4 text-left text-base font-medium hover:border-blue-400 hover:bg-blue-50/60 disabled:opacity-60 disabled:hover:border-gray-300 disabled:hover:bg-white"
+            className="w-full rounded-xl border-2 border-gray-300 bg-white px-5 py-4 text-left text-base font-medium shadow-sm hover:border-blue-400 hover:bg-blue-50/60 disabled:opacity-60 disabled:hover:border-gray-300 disabled:hover:bg-white"
           >
             {pending === opt.code ? '저장하는 중...' : opt.label}
           </button>

@@ -247,8 +247,8 @@ export default function GuidancePage() {
           return (
             <li
               key={step.step_id}
-              className={`rounded-xl border-2 p-4 ${
-                isTopPriority ? 'border-red-600 bg-red-50' : 'border-gray-200'
+              className={`rounded-xl border-2 p-4 shadow-sm ${
+                isTopPriority ? 'border-red-600 bg-red-50' : 'border-gray-200 bg-white'
               }`}
             >
               {isTopPriority && (
