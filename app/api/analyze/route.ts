@@ -35,7 +35,16 @@ function dropUnverifiableQuotes(result: AnalysisResult, normalizedText: string):
 async function runAnalysis(text: string) {
   const provider = getAnalyzeProvider()
   for (let attempt = 0; attempt < 2; attempt++) {
-    const output = await provider.analyze({ text, entryPath: 'SELF_SUSPICION' })
+    let output
+    try {
+      output = await provider.analyze({ text, entryPath: 'SELF_SUSPICION' })
+    } catch {
+      // 실제 LLM provider는 네트워크/API 오류로 예외를 던질 수 있다(mock은
+      // 던지지 않았다). 스키마 검증 실패와 동일하게 다음 시도로 넘기고,
+      // 그래도 안 되면 아래에서 null을 반환해 기존 AI_UNAVAILABLE 경로를
+      // 그대로 탄다 — 여기서 새 에러 처리 경로를 만들지 않는다.
+      continue
+    }
     const cleaned = dropUnverifiableQuotes(output.result, text)
     const parsed = AnalysisResultSchema.safeParse(cleaned)
     if (parsed.success) {

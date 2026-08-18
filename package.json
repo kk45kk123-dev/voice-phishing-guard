@@ -17,6 +17,7 @@
     "seed:kb": "tsx --env-file-if-exists=.env.local scripts/seed-kb.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.117.1",
     "@supabase/supabase-js": "^2.45.4",
     "next": "^15.1.0",
     "react": "^19.0.0",

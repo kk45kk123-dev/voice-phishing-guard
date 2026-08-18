@@ -24,6 +24,8 @@ export default defineConfig({
     env: {
       SUPABASE_URL: env.SUPABASE_URL,
       SUPABASE_SERVICE_ROLE_KEY: env.SUPABASE_SERVICE_ROLE_KEY,
+      ANTHROPIC_API_KEY: env.ANTHROPIC_API_KEY,
+      LLM_PROVIDER: env.LLM_PROVIDER,
     },
   },
 })

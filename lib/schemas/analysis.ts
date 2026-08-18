@@ -34,7 +34,7 @@ export const PERSUASION_TACTICS = [
 ] as const
 export const PersuasionTacticSchema = z.enum(PERSUASION_TACTICS)
 
-const StatesArraySchema = z
+export const StatesArraySchema = z
   .array(StateSchema)
   .min(1)
   .max(7)
